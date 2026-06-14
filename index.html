@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>City Library</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+  body {
+    background: url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1600') center/cover fixed;
+    min-height: 100vh;
+  }
+  .overlay { background: rgba(0,0,0,0.55); min-height: 100vh; padding: 40px 20px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { color: #fff; text-align: center; margin-bottom: 30px; font-size: 2.2rem; }
+  .search-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .search-bar input, .search-bar select {
+    padding: 12px 15px; border-radius: 8px; border: none; font-size: 1rem;
+  }
+  .search-bar input { flex: 1; min-width: 200px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; }
+  .card {
+    background: rgba(255,255,255,0.92); border-radius: 10px; padding: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.2s;
+  }
+  .card:hover { transform: translateY(-5px); }
+  .card h3 { color: #2c2c2a; margin-bottom: 6px; }
+  .card p { color: #555; font-size: 0.9rem; margin-bottom: 4px; }
+  .badge {
+    display: inline-block; margin-top: 8px; padding: 4px 10px; border-radius: 6px;
+    font-size: 0.8rem; font-weight: bold;
+  }
+  .available { background: #d1f7d6; color: #1d6e2f; }
+  .unavailable { background: #fbd5d5; color: #a32d2d; }
+  .empty { color: #fff; text-align: center; margin-top: 30px; font-size: 1.1rem; }
+</style>
+</head>
+<body>
+<div class="overlay">
+  <div class="container">
+    <h1>📚 City Library Catalog</h1>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search by title, author, or genre...">
+      <select id="genreFilter">
+        <option value="all">All genres</option>
+        <option value="Fiction">Fiction</option>
+        <option value="Fantasy">Fantasy</option>
+        <option value="Science">Science</option>
+        <option value="History">History</option>
+        <option value="Mystery">Mystery</option>
+      </select>
+    </div>
+    <div class="grid" id="results"></div>
+    <p class="empty" id="emptyMsg" style="display:none;">No books found.</p>
+  </div>
+</div>
+
+<script>
+const books = [
+  { title: "The Midnight Library", author: "Matt Haig", genre: "Fiction", year: 2020, available: true },
+  { title: "Dune", author: "Frank Herbert", genre: "Science", year: 1965, available: false },
+  { title: "A Brief History of Time", author: "Stephen Hawking", genre: "Science", year: 1988, available: true },
+  { title: "The Hobbit", author: "J.R.R. Tolkien", genre: "Fantasy", year: 1937, available: true },
+  { title: "Sapiens", author: "Yuval Noah Harari", genre: "History", year: 2011, available: true },
+  { title: "Gone Girl", author: "Gillian Flynn", genre: "Mystery", year: 2012, available: false },
+  { title: "1984", author: "George Orwell", genre: "Fiction", year: 1949, available: true },
+  { title: "The Name of the Wind", author: "Patrick Rothfuss", genre: "Fantasy", year: 2007, available: true },
+  { title: "Guns, Germs, and Steel", author: "Jared Diamond", genre: "History", year: 1997, available: true },
+  { title: "The Silent Patient", author: "Alex Michaelides", genre: "Mystery", year: 2019, available: true },
+  { title: "Cosmos", author: "Carl Sagan", genre: "Science", year: 1980, available: false },
+  { title: "Pride and Prejudice", author: "Jane Austen", genre: "Fiction", year: 1813, available: true }
+];
+
+const resultsEl = document.getElementById('results');
+const searchInput = document.getElementById('searchInput');
+const genreFilter = document.getElementById('genreFilter');
+const emptyMsg = document.getElementById('emptyMsg');
+
+function render() {
+  const q = searchInput.value.trim().toLowerCase();
+  const genre = genreFilter.value;
+  const filtered = books.filter(b =>
+    (!q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.genre.toLowerCase().includes(q)) &&
+    (genre === 'all' || b.genre === genre)
+  );
+
+  resultsEl.innerHTML = '';
+  emptyMsg.style.display = filtered.length === 0 ? 'block' : 'none';
+
+  filtered.forEach(b => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <h3>${b.title}</h3>
+      <p>${b.author} · ${b.year}</p>
+      <p>Genre: ${b.genre}</p>
+      <span class="badge ${b.available ? 'available' : 'unavailable'}">
+        ${b.available ? 'Available' : 'Checked out'}
+      </span>
+    `;
+    resultsEl.appendChild(card);
+  });
+}
+
+searchInput.addEventListener('input', render);
+genreFilter.addEventListener('change', render);
+render();
+</script>
+</body>
+</html>
