@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_REPO        = 'yourdockerhubuser/your-app'   // change to your Docker Hub repo
+        DOCKERHUB_REPO        = 'manasi99/book-liabrary'   // change to your Docker Hub repo
         IMAGE_TAG             = "${env.BUILD_NUMBER}"
         AWS_REGION            = 'us-east-1'
         ECS_CLUSTER           = 'jenkins-ecs-cluster'           // must match ecs_cluster_name in ecs.tf
